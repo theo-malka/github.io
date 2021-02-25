@@ -8,6 +8,7 @@ let width = 400,
   streamingHistory,
   recommendationChart,
   averageScorePerFeatures,
+  countPerArtist,
   features = [
     "danceability",
     "energy",
@@ -22,12 +23,6 @@ let width = 400,
   ];
 
 songSelector = document.getElementById("selectsongindex");
-monthSelector = document.getElementById("selectmonthindex");
-
-Date.prototype.getWeek = function() {
-  var onejan = new Date(this.getFullYear(),0,1);
-  return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
-}
 
 function fillSelector(songSelector, values) {
   while (songSelector.hasChildNodes()) {
@@ -84,7 +79,6 @@ function formatTime(time) {
       : parseInt(time % 60))
   );
 }
-
 function calculateAverageScorePerFeatures() {
   let averageScore = {};
   features.forEach((feature) => {
@@ -96,23 +90,21 @@ function calculateAverageScorePerFeatures() {
   return averageScore;
 }
 
-function calculatedailyListeningTime(){
-  table = Array.from(d3.rollup(streamingHistory, v => d3.sum(v, v => v["msPlayed"]), d => d["endTime"].substring(0,10)))
-    .map(d => {
-      d["user"] = "User1"
-      d["day"] = d[0]
-      d["month"] = d[0].substring(0,7)
-      d["dayOfWeek"] = (new Date(d[0])).getDay()
-      d["totalPlayedTimeMin"] = d[1]/1000/60
-      d["totalPlayedTimeMs"] = d[1]
+function calculateCountPerArtist() {
+  let countPerArtist = user_songs
+    .map((song) => {
+      return song.countPerTrack > 30
+        ? { name: song.name, value: song.countPerTrack }
+        : null;
     })
-  return table
+    .filter((elt) => elt !== null);
+  return countPerArtist;
 }
 
 function processData() {
   path_recommendations = buildRecommendationsPath();
   averageScorePerFeatures = calculateAverageScorePerFeatures();
-  dailyListeningTime = calculatedailyListeningTime();
+  countPerArtist = calculateCountPerArtist();
 }
 
 function buildApp() {
@@ -163,7 +155,7 @@ function buildViz() {
   );
   drawRadioChart(
     ".radio-chart",
-    { top: 50, right: 50, bottom: 50, left: 50 },
+    { top: 100, right: 100, bottom: 100, left: 100 },
     width,
     height,
     "Average scores",
@@ -171,10 +163,7 @@ function buildViz() {
     averageScorePerFeatures
   );
 
-  dataParl = data.map((value, index) => {
-    value["name"] = songs[index];
-    return value;
-  });
+  drawPieChart(".pie-chart", width, height, countPerArtist);
 }
 
 buildApp();

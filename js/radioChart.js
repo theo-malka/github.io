@@ -77,7 +77,7 @@ function drawRadioChart(
       .append("text")
       .attr("x", label_coordinate.x)
       .attr("y", label_coordinate.y)
-      .attr("font-size", 10)
+      .attr("font-size", 12)
       .text(ft_name);
   }
 
