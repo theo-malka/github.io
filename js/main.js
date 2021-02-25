@@ -22,6 +22,12 @@ let width = 400,
   ];
 
 songSelector = document.getElementById("selectsongindex");
+monthSelector = document.getElementById("selectmonthindex");
+
+Date.prototype.getWeek = function() {
+  var onejan = new Date(this.getFullYear(),0,1);
+  return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
+}
 
 function fillSelector(songSelector, values) {
   while (songSelector.hasChildNodes()) {
@@ -78,6 +84,7 @@ function formatTime(time) {
       : parseInt(time % 60))
   );
 }
+
 function calculateAverageScorePerFeatures() {
   let averageScore = {};
   features.forEach((feature) => {
@@ -89,9 +96,23 @@ function calculateAverageScorePerFeatures() {
   return averageScore;
 }
 
+function calculatedailyListeningTime(){
+  table = Array.from(d3.rollup(streamingHistory, v => d3.sum(v, v => v["msPlayed"]), d => d["endTime"].substring(0,10)))
+    .map(d => {
+      d["user"] = "User1"
+      d["day"] = d[0]
+      d["month"] = d[0].substring(0,7)
+      d["dayOfWeek"] = (new Date(d[0])).getDay()
+      d["totalPlayedTimeMin"] = d[1]/1000/60
+      d["totalPlayedTimeMs"] = d[1]
+    })
+  return table
+}
+
 function processData() {
   path_recommendations = buildRecommendationsPath();
   averageScorePerFeatures = calculateAverageScorePerFeatures();
+  dailyListeningTime = calculatedailyListeningTime();
 }
 
 function buildApp() {
