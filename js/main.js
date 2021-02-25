@@ -8,6 +8,7 @@ let width = 400,
   streamingHistory,
   recommendationChart,
   averageScorePerFeatures,
+  countPerArtist,
   features = [
     "danceability",
     "energy",
@@ -89,9 +90,21 @@ function calculateAverageScorePerFeatures() {
   return averageScore;
 }
 
+function calculateCountPerArtist() {
+  let countPerArtist = user_songs
+    .map((song) => {
+      return song.countPerTrack > 30
+        ? { name: song.name, value: song.countPerTrack }
+        : null;
+    })
+    .filter((elt) => elt !== null);
+  return countPerArtist;
+}
+
 function processData() {
   path_recommendations = buildRecommendationsPath();
   averageScorePerFeatures = calculateAverageScorePerFeatures();
+  countPerArtist = calculateCountPerArtist();
 }
 
 function buildApp() {
@@ -142,7 +155,7 @@ function buildViz() {
   );
   drawRadioChart(
     ".radio-chart",
-    { top: 50, right: 50, bottom: 50, left: 50 },
+    { top: 100, right: 100, bottom: 100, left: 100 },
     width,
     height,
     "Average scores",
@@ -150,10 +163,7 @@ function buildViz() {
     averageScorePerFeatures
   );
 
-  dataParl = data.map((value, index) => {
-    value["name"] = songs[index];
-    return value;
-  });
+  drawPieChart(".pie-chart", width, height, countPerArtist);
 }
 
 buildApp();
