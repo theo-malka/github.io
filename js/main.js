@@ -1,5 +1,5 @@
-let width = 500,
-  height = 500,
+let width = 600,
+  height = 600,
   facteurTaille = 20,
   maxEcoute = 80,
   path_recommendations,
@@ -10,7 +10,6 @@ let width = 500,
   radioChart,
   barChart,
   averageScorePerFeatures,
-  countPerArtist,
   features = [
     "danceability",
     "energy",
@@ -75,7 +74,7 @@ monthSelector.addEventListener("change", (event) => {
   barChart.filterMonth(event.target.value);
 });
 
-// let chartDiv = document.getElementById("chart-div");
+// let chartDiv = document.getElementById("recommendationchart-div");
 // chartDiv.setAttribute("width", width);
 // chartDiv.setAttribute("height", height);
 
@@ -125,17 +124,6 @@ function calculateAverageScorePerFeatures() {
   return averageScore;
 }
 
-function calculateCountPerArtist() {
-  let countPerArtist = user_songs
-    .map((song) => {
-      return song.countPerTrack > 30
-        ? { name: song.name, value: song.countPerTrack }
-        : null;
-    })
-    .filter((elt) => elt !== null);
-  return countPerArtist;
-}
-
 function calculatedailyListeningTime() {
   let dailyListeningTime = Array.from(
     d3.rollup(
@@ -158,7 +146,6 @@ function calculatedailyListeningTime() {
 function processData() {
   path_recommendations = buildRecommendationsPath();
   averageScorePerFeatures = calculateAverageScorePerFeatures();
-  countPerArtist = calculateCountPerArtist();
   dailyListeningTime = calculatedailyListeningTime();
 }
 
@@ -221,7 +208,6 @@ function buildViz() {
     features,
     averageScorePerFeatures
   );
-  drawPieChart(".pie-chart", width, height, countPerArtist);
   barChart = drawBarChart(
     ".bar-chart",
     { top: 75, right: 75, bottom: 75, left: 75 },
