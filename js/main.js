@@ -8,6 +8,7 @@ let width = 500,
   streamingHistory,
   recommendationChart,
   radioChart,
+  barChart,
   averageScorePerFeatures,
   countPerArtist,
   features = [
@@ -216,7 +217,7 @@ function buildViz() {
     averageScorePerFeatures
   );
   drawPieChart(".pie-chart", width, height, countPerArtist);
-  console.log(dailyListeningTime);
+  //   console.log(dailyListeningTime);
   barChart = drawBarChart(
     ".bar-chart",
     { top: 100, right: 100, bottom: 100, left: 100 },
