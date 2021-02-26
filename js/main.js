@@ -52,6 +52,9 @@ function fillSelectorMonth(monthSelector, values) {
       })
     )
   );
+  while (monthSelector.hasChildNodes()) {
+    monthSelector.removeChild(monthSelector.lastChild);
+  }
   allMonth.forEach((key) => {
     let option = document.createElement("option");
     option.value = key;
