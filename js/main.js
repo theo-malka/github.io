@@ -7,6 +7,7 @@ let width = 500,
   songs,
   streamingHistory,
   recommendationChart,
+  radioChart,
   averageScorePerFeatures,
   countPerArtist,
   features = [
@@ -23,8 +24,14 @@ let width = 500,
   ];
 
 songSelector = document.getElementById("selectsongindex");
+monthSelector = document.getElementById("selectmonthindex");
 
-function fillSelector(songSelector, values) {
+Date.prototype.getWeek = function () {
+  var onejan = new Date(this.getFullYear(), 0, 1);
+  return Math.ceil(((this - onejan) / 86400000 + onejan.getDay() + 1) / 7);
+};
+
+function fillSelectorSong(songSelector, values) {
   while (songSelector.hasChildNodes()) {
     songSelector.removeChild(songSelector.lastChild);
   }
@@ -36,9 +43,33 @@ function fillSelector(songSelector, values) {
   });
 }
 
+function fillSelectorMonth(monthSelector, values) {
+  let allMonth = Array.from(
+    new Set(
+      values.map(function (c) {
+        return c["month"];
+      })
+    )
+  );
+  allMonth.forEach((key) => {
+    let option = document.createElement("option");
+    option.value = key;
+    option.innerHTML = key;
+    monthSelector.appendChild(option);
+  });
+  console.log(allMonth);
+}
+
 songSelector.addEventListener("change", (event) => {
   songIndex = parseInt(event.target.value);
+  console.log(user_songs[songIndex]);
   recommendationChart.changeSong(user_songs[songIndex]);
+  radioChart.changeSong(user_songs[songIndex]);
+});
+
+monthSelector.addEventListener("change", (event) => {
+  monthIndex = parseInt(event.target.value);
+  barChart.filterMonth(event.target.value);
 });
 
 // let chartDiv = document.getElementById("chart-div");
@@ -79,6 +110,7 @@ function formatTime(time) {
       : parseInt(time % 60))
   );
 }
+
 function calculateAverageScorePerFeatures() {
   let averageScore = {};
   features.forEach((feature) => {
@@ -101,10 +133,30 @@ function calculateCountPerArtist() {
   return countPerArtist;
 }
 
+function calculatedailyListeningTime() {
+  let dailyListeningTime = Array.from(
+    d3.rollup(
+      streamingHistory,
+      (v) => d3.sum(v, (v) => v["msPlayed"]),
+      (d) => d["endTime"].substring(0, 10)
+    )
+  ).map((d) => {
+    d["user"] = "User1";
+    d["day"] = d[0];
+    d["month"] = d[0].substring(0, 7);
+    d["dayOfWeek"] = new Date(d[0]).getDay();
+    d["totalPlayedTimeMin"] = d[1] / 1000 / 60;
+    d["totalPlayedTimeMs"] = d[1];
+    return d;
+  });
+  return dailyListeningTime;
+}
+
 function processData() {
   path_recommendations = buildRecommendationsPath();
   averageScorePerFeatures = calculateAverageScorePerFeatures();
   countPerArtist = calculateCountPerArtist();
+  dailyListeningTime = calculatedailyListeningTime();
 }
 
 function buildApp() {
@@ -131,7 +183,8 @@ function buildApp() {
       console.log(user_songs);
       //   console.log(streamingHistory, user_songs, songs);
       processData();
-      fillSelector(songSelector, user_songs);
+      fillSelectorSong(songSelector, user_songs);
+      fillSelectorMonth(monthSelector, dailyListeningTime);
       buildViz();
     });
 }
@@ -153,17 +206,25 @@ function buildViz() {
     user_songs,
     songs
   );
-  drawRadioChart(
+  radioChart = drawRadioChart(
     ".radio-chart",
     { top: 100, right: 100, bottom: 100, left: 100 },
     width,
     height,
-    "Average scores",
+    "Scores by songs and average score",
     features,
     averageScorePerFeatures
   );
-
   drawPieChart(".pie-chart", width, height, countPerArtist);
+  console.log(dailyListeningTime);
+  barChart = drawBarChart(
+    ".bar-chart",
+    { top: 100, right: 100, bottom: 100, left: 100 },
+    width,
+    height,
+    "Monthly Listening Time",
+    dailyListeningTime
+  );
 }
 
 buildApp();
