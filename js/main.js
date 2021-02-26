@@ -1,5 +1,5 @@
-let width = 400,
-  height = 400,
+let width = 500,
+  height = 500,
   facteurTaille = 20,
   maxEcoute = 80,
   path_recommendations,

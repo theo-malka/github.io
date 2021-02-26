@@ -1,19 +1,24 @@
 body {
     margin: 2%;
-    /* width:2500px;
-    height: 1500px; */
 }
 
+/* html, body {
+    height:100%;width:100;
+    overflow: hidden;
+    padding:0;
+} */
 .title{
     text-align: center;
-    margin:2%;
+    margin:1%;
 }
 
 .wrapper {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 10px;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr); 
+    /* 30% 30% 30%; */
+    grid-gap: 5px;
+    grid-template-rows: 1fr 1fr 1fr; 
+    /* 30% 30% 30%; */
     /* grid-auto-rows: minmax(100px, auto); */
   }
 
