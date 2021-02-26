@@ -8,7 +8,7 @@ function drawRadioChart(
   averageScorePerFeatures
 ) {
   d3.select(container).selectAll("*").remove();
-  const svg = d3
+  const svgRadioChart = d3
     .select(container)
     .append("svg")
     .attr("viewBox", [
@@ -20,7 +20,7 @@ function drawRadioChart(
 
   let center = { x: width / 2 + margin.left, y: height / 2 + margin.top };
 
-  svg
+  svgRadioChart
     .append("text")
     .attr("x", center.x)
     .attr("y", margin.top / 10)
@@ -33,7 +33,7 @@ function drawRadioChart(
   let ticks = [0.2, 0.4, 0.6, 0.8, 1];
 
   ticks.forEach((t) =>
-    svg
+    svgRadioChart
       .append("circle")
       .attr("cx", center.x)
       .attr("cy", center.y)
@@ -64,7 +64,7 @@ function drawRadioChart(
     let label_coordinate = angleToTextCoordinate(angle, 1.1);
 
     //draw axis line
-    svg
+    svgRadioChart
       .append("line")
       .attr("x1", center.x)
       .attr("y1", center.y)
@@ -73,7 +73,7 @@ function drawRadioChart(
       .attr("stroke", "black");
 
     //draw axis label
-    svg
+    svgRadioChart
       .append("text")
       .attr("x", label_coordinate.x)
       .attr("y", label_coordinate.y)
@@ -89,7 +89,7 @@ function drawRadioChart(
 
   function getPathCoordinates(data_point) {
     let coordinates = [];
-    console.log(data_point);
+    // console.log(data_point);
     for (var i = 0; i < features.length; i++) {
       let ft_name = features[i];
       let angle = Math.PI / 2 + (2 * Math.PI * i) / features.length;
@@ -107,9 +107,9 @@ function drawRadioChart(
 
     let songCoordinates = getPathCoordinates(songScore);
 
-    svg.selectAll("path").remove();
+    svgRadioChart.selectAll("path").remove();
 
-    svg
+    svgRadioChart
       .append("path")
       .datum(songCoordinates)
       .transition()
@@ -122,7 +122,7 @@ function drawRadioChart(
       .attr("stroke-opacity", 1)
       .attr("opacity", 0.4);
 
-    svg
+    svgRadioChart
       .append("path")
       .datum(coordinates)
       .transition()
@@ -141,7 +141,7 @@ function drawRadioChart(
   coordinates.push(coordinates[0]);
 
   //draw the path element
-  svg
+  svgRadioChart
     .append("path")
     .datum(coordinates)
     .transition()
@@ -154,7 +154,7 @@ function drawRadioChart(
     .attr("stroke-opacity", 1)
     .attr("opacity", 0.4);
 
-  return Object.assign(svg.node(), {
+  return Object.assign(svgRadioChart.node(), {
     changeSong: changeSong,
   });
 }

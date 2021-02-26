@@ -58,7 +58,6 @@ function fillSelectorMonth(monthSelector, values) {
     option.innerHTML = key;
     monthSelector.appendChild(option);
   });
-  console.log(allMonth);
 }
 
 songSelector.addEventListener("change", (event) => {
@@ -119,7 +118,7 @@ function calculateAverageScorePerFeatures() {
       user_songs.map((song) => song[feature]).reduce((a, b) => a + b) /
       user_songs.length;
   });
-  console.log(averageScore);
+  //   console.log(averageScore);
   return averageScore;
 }
 
@@ -181,8 +180,6 @@ function buildApp() {
         (songs = Object.values(results[0]));
     })
     .then(() => {
-      console.log(user_songs);
-      //   console.log(streamingHistory, user_songs, songs);
       processData();
       fillSelectorSong(songSelector, user_songs);
       fillSelectorMonth(monthSelector, dailyListeningTime);
@@ -196,6 +193,10 @@ function readFile(file) {
   });
 }
 
+function onClickRecommendation(d) {
+  console.log("onClickRecommendation : ", d);
+}
+
 function buildViz() {
   recommendationChart = drawRecommendationChart(
     ".recommendation-chart",
@@ -205,19 +206,19 @@ function buildViz() {
     maxEcoute,
     path_recommendations,
     user_songs,
-    songs
+    songs,
+    onClickRecommendation
   );
   radioChart = drawRadioChart(
     ".radio-chart",
     { top: 100, right: 100, bottom: 100, left: 100 },
     width,
     height,
-    "Scores by songs and average score",
+    "Songs features",
     features,
     averageScorePerFeatures
   );
   drawPieChart(".pie-chart", width, height, countPerArtist);
-  //   console.log(dailyListeningTime);
   barChart = drawBarChart(
     ".bar-chart",
     { top: 100, right: 100, bottom: 100, left: 100 },

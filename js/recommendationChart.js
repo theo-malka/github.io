@@ -6,7 +6,8 @@ function drawRecommendationChart(
   maxEcoute,
   path_recommendations,
   user_songs,
-  songs
+  songs,
+  onClick
 ) {
   const totalWidth = facteurTaille * width,
     totalHeight = facteurTaille * height;
@@ -63,8 +64,7 @@ function drawRecommendationChart(
     return scale(d.kmeans_cluster);
   }
 
-  const points = g
-    .selectAll("circle")
+  g.selectAll("song_circle")
     .data(songs)
     .join("circle")
     .attr("cx", (d) => x(d.x))
@@ -135,8 +135,9 @@ function drawRecommendationChart(
     .attr("stroke", "black")
     .attr("stroke-width", 2)
     .on("click", function (event, d) {
-      //   console.log("click", d3.selectAll("path"));
-      d3.selectAll("path")
+      onClick(d);
+      svg
+        .selectAll("path")
         .select(function (dline, idx) {
           if (dline && dline.id_user == d.id) {
             dline["printPath"] = !dline["printPath"];
@@ -149,7 +150,8 @@ function drawRecommendationChart(
         .attr("stroke", (d) => color(songs[d.index_song]))
         .style("visibility", "visible");
 
-      d3.selectAll("circle")
+      svg
+        .selectAll("circle")
         .select(function (dcircle, idx) {
           return d.recommendations.indexOf(dcircle.id) !== -1 &&
             dcircle.recommendations === undefined
@@ -205,8 +207,7 @@ function drawRecommendationChart(
 
   const curve = d3.line().curve(d3.curveBasis);
 
-  const lines = g
-    .selectAll("lines")
+  g.selectAll("lines")
     .data(path_recommendations)
     .join("path")
     .attr("d", (d) => {
@@ -255,14 +256,16 @@ function drawRecommendationChart(
   }
 
   function userSongOvered(event, d) {
-    d3.selectAll("circle")
+    svg
+      .selectAll("circle")
       .select(function (dcircle, idx) {
         return dcircle.id === d.id ? this : null;
       })
       .attr("fill", (d) =>
         highlighterdUserPoint === d.name ? "magenta" : colorHilightedCircle
       );
-    d3.selectAll("path")
+    svg
+      .selectAll("path")
       .select(function (dline, idx) {
         return dline && dline.id_user == d.id ? this : null;
       })
@@ -272,14 +275,16 @@ function drawRecommendationChart(
   }
 
   function userSongOuted(event, d) {
-    d3.selectAll("circle")
+    svg
+      .selectAll("circle")
       .select(function (dcircle, idx) {
         return dcircle.id === d.id ? this : null;
       })
       .attr("fill", (d) =>
         highlighterdUserPoint === d.name ? "magenta" : "white"
       );
-    d3.selectAll("path")
+    svg
+      .selectAll("path")
       .select(function (dline, idx) {
         return dline && dline.id_user == d.id && !dline["printPath"]
           ? this
