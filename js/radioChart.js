@@ -23,7 +23,7 @@ function drawRadioChart(
   svgRadioChart
     .append("text")
     .attr("x", center.x)
-    .attr("y", margin.top / 10)
+    .attr("y", margin.top / 3)
     .attr("text-anchor", "middle")
     .style("font-size", "20px")
     .style("font-family", "system-ui")
@@ -77,7 +77,7 @@ function drawRadioChart(
       .append("text")
       .attr("x", label_coordinate.x)
       .attr("y", label_coordinate.y)
-      .attr("font-size", 12)
+      .attr("font-size", 14)
       .style("font-family", "system-ui")
       .text(ft_name);
   }

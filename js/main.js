@@ -211,7 +211,7 @@ function buildViz() {
   );
   radioChart = drawRadioChart(
     ".radio-chart",
-    { top: 100, right: 100, bottom: 100, left: 100 },
+    { top: 75, right: 75, bottom: 75, left: 75 },
     width,
     height,
     "Songs features",
@@ -221,7 +221,7 @@ function buildViz() {
   drawPieChart(".pie-chart", width, height, countPerArtist);
   barChart = drawBarChart(
     ".bar-chart",
-    { top: 100, right: 100, bottom: 100, left: 100 },
+    { top: 75, right: 75, bottom: 75, left: 75 },
     width,
     height,
     "Monthly Listening Time",
