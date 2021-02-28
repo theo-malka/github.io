@@ -213,7 +213,7 @@ function buildViz() {
     { top: 75, right: 75, bottom: 75, left: 75 },
     width,
     height,
-    "Monthly Listening Time",
+    "Monthly Listening Time (Min)",
     dailyListeningTime
   );
 }
