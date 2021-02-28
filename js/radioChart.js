@@ -134,6 +134,8 @@ function drawRadioChart(
 
     let songCoordinates = getPathCoordinates(songScore);
 
+    svgRadioChart.select("#onhoverpath").remove();
+
     svgRadioChart
       .append("path")
       .datum(songCoordinates)
