@@ -162,7 +162,7 @@ function buildApp() {
       streamingHistory = results[2].concat(results[3]);
       (user_songs = Object.values(results[1])
         // .slice(0, 200)
-        .sort((a, b) => b.msPlayedSum - a.msPlayedSum)
+        .sort((a, b) => b.countPerTrack - a.countPerTrack) //b.msPlayedSum - a.msPlayedSum)
         .map((elt) => {
           elt["msPlayedSumTime"] = formatTime(elt["msPlayedSum"]);
           return elt;
