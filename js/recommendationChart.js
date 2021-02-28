@@ -7,7 +7,9 @@ function drawRecommendationChart(
   path_recommendations,
   user_songs,
   songs,
-  onClick
+  onClick,
+  onHover,
+  onOuted
 ) {
   const totalWidth = facteurTaille * width,
     totalHeight = facteurTaille * height;
@@ -31,6 +33,8 @@ function drawRecommendationChart(
     .style("z-index", "10")
     .style("visibility", "hidden")
     .style("background-color", "#FFFFFF")
+    // .style("width", "200px")
+    // .style("height", "200px")
     .html("<div>a simple tooltip</div>");
 
   function moveTooltip(event) {
@@ -78,6 +82,7 @@ function drawRecommendationChart(
     .attr("stroke", "black")
     // .attr("data-legend",function(d) { return d.color})
     .on("mouseover", function (event, d) {
+      onHover(d);
       tooltip.html(`
                     <div style = "border:2px solid;"> 
                         <b> Title :</b> ${d.name}  <br> 
@@ -111,6 +116,7 @@ function drawRecommendationChart(
     })
 
     .on("mouseout", function (event, d) {
+      onOuted();
       return tooltip.style("visibility", "hidden");
     });
 
@@ -256,6 +262,7 @@ function drawRecommendationChart(
   }
 
   function userSongOvered(event, d) {
+    onHover(d);
     svg
       .selectAll("circle")
       .select(function (dcircle, idx) {
@@ -275,6 +282,7 @@ function drawRecommendationChart(
   }
 
   function userSongOuted(event, d) {
+    onOuted();
     svg
       .selectAll("circle")
       .select(function (dcircle, idx) {
@@ -378,7 +386,7 @@ function drawRecommendationChart(
       );
   }
 
-  svg.append("g").call(legend);
+  // svg.append("g").call(legend);
 
   return Object.assign(svg.node(), {
     changeSong: changeSong,

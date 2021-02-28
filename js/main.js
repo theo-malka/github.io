@@ -38,7 +38,7 @@ function fillSelectorSong(songSelector, values) {
   values.forEach((key, index) => {
     let option = document.createElement("option");
     option.value = index;
-    option.innerHTML = key.name;
+    option.innerHTML = key.name + " (" + key.countPerTrack + " listenings)";
     songSelector.appendChild(option);
   });
 }
@@ -184,7 +184,16 @@ function readFile(file) {
 }
 
 function onClickRecommendation(d) {
-  console.log("onClickRecommendation : ", d);
+  songSelector.value = user_songs.indexOf(d);
+  radioChart.changeSong(d);
+}
+
+function onHoverRecommendation(d) {
+  radioChart.hoverSong(d);
+}
+
+function onOutedRecommendation(d) {
+  radioChart.outedSong(d);
 }
 
 function buildViz() {
@@ -197,7 +206,9 @@ function buildViz() {
     path_recommendations,
     user_songs,
     songs,
-    onClickRecommendation
+    onClickRecommendation,
+    onHoverRecommendation,
+    onOutedRecommendation
   );
   radioChart = drawRadioChart(
     ".radio-chart",

@@ -7,6 +7,33 @@ function drawRadioChart(
   features,
   averageScorePerFeatures
 ) {
+  let pcaEigenVectors = [
+    [
+      -0.14530892,
+      -0.45164598,
+      -0.17922085,
+      0.01960184,
+      0.71010892,
+      -0.0491576,
+      -0.07115688,
+      -0.4733142,
+      -0.07960588,
+      0.01729172,
+    ],
+    [
+      0.23709846,
+      -0.07054986,
+      -0.03171221,
+      0.07658478,
+      0.50155709,
+      -0.19860144,
+      -0.06383221,
+      0.79601205,
+      -0.03163607,
+      -0.04715422,
+    ],
+  ];
+
   d3.select(container).selectAll("*").remove();
   const svgRadioChart = d3
     .select(container)
@@ -95,7 +122,36 @@ function drawRadioChart(
       let angle = Math.PI / 2 + (2 * Math.PI * i) / features.length;
       coordinates.push(angleToCoordinate(angle, data_point[ft_name]));
     }
+    coordinates.push(coordinates[0]);
     return coordinates;
+  }
+
+  function hoverSong(song) {
+    let songScore = {};
+    features.forEach((feature) => {
+      songScore[feature] = song[feature];
+    });
+
+    let songCoordinates = getPathCoordinates(songScore);
+
+    svgRadioChart
+      .append("path")
+      .datum(songCoordinates)
+      .transition()
+      .ease(d3.easeLinear)
+      .duration(200)
+      .attr("d", line)
+      .attr("stroke-width", 3)
+      .attr("stroke", "#1956ff")
+      .attr("fill", "#36b3ff")
+      .attr("stroke-opacity", 1)
+      .attr("opacity", 0.4)
+      .attr("id", "onhoverpath");
+  }
+
+  function outedSong() {
+    svgRadioChart.select("#onhoverpath").remove();
+    // console.log(svgRadioChart.selectAll("path"));
   }
 
   function changeSong(song) {
@@ -103,7 +159,6 @@ function drawRadioChart(
     features.forEach((feature) => {
       songScore[feature] = song[feature];
     });
-    // console.log(songScore);
 
     let songCoordinates = getPathCoordinates(songScore);
 
@@ -122,9 +177,16 @@ function drawRadioChart(
       .attr("stroke-opacity", 1)
       .attr("opacity", 0.4);
 
+    drawAveragePath();
+  }
+
+  let averageCoordinates = getPathCoordinates(averageScorePerFeatures);
+
+  function drawAveragePath() {
+    //draw the average path element
     svgRadioChart
       .append("path")
-      .datum(coordinates)
+      .datum(averageCoordinates)
       .transition()
       .ease(d3.easeLinear)
       .duration(200)
@@ -136,25 +198,11 @@ function drawRadioChart(
       .attr("opacity", 0.4);
   }
 
-  let coordinates = getPathCoordinates(averageScorePerFeatures);
-
-  coordinates.push(coordinates[0]);
-
-  //draw the path element
-  svgRadioChart
-    .append("path")
-    .datum(coordinates)
-    .transition()
-    .ease(d3.easeLinear)
-    .duration(200)
-    .attr("d", line)
-    .attr("stroke-width", 3)
-    .attr("stroke", "#0000FF")
-    .attr("fill", "#3333AA")
-    .attr("stroke-opacity", 1)
-    .attr("opacity", 0.4);
+  drawAveragePath();
 
   return Object.assign(svgRadioChart.node(), {
     changeSong: changeSong,
+    hoverSong: hoverSong,
+    outedSong: outedSong,
   });
 }
