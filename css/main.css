@@ -8,7 +8,7 @@ html, body {
 
 #btn-info{
     display: flex;
-    margin:10px;
+    margin:6px;
     justify-content: flex-end;
 }
 
