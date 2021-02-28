@@ -72,7 +72,7 @@ function drawBarChart(
     .text((d) => d["day"]);
 
   g.append("text")
-    .attr("x", width / 3 + 30)
+    .attr("x", width / 3)
     .attr("y", height + 90)
     .style("font-size", "20px")
     .style("font-family", "system-ui")
@@ -135,7 +135,7 @@ function drawBarChart(
       .text((d) => d["day"]);
     
     g.append("text")
-        .attr("x", width / 3 + 30)
+        .attr("x", width / 3)
         .attr("y", height + 90)
         .style("font-size", "20px")
         .style("font-family", "system-ui")
