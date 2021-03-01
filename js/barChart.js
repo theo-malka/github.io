@@ -4,10 +4,11 @@ function drawBarChart(
   width,
   height,
   title,
-  dailyListeningTime
+  dailyListeningTime,
+  selectedMonth
 ) {
   let dailyListeningTimeFiltered = dailyListeningTime.filter(
-    (d) => d["month"] === "2020-12"
+    (d) => d["month"] === selectedMonth
   );
 
   d3.select(container).selectAll("*").remove();

@@ -225,7 +225,8 @@ function buildViz() {
     width,
     height,
     "Monthly Listening Time (Min)",
-    dailyListeningTime
+    dailyListeningTime,
+    monthSelector.options[monthSelector.selectedIndex].value
   );
 }
 
