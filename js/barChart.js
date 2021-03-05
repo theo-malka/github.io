@@ -35,7 +35,7 @@ function drawBarChart(
     .scaleLinear()
     .domain([
       0,
-      d3.max(dailyListeningTimeFiltered, (d) => d["totalPlayedTimeMin"]),
+      d3.max(dailyListeningTimeFiltered, (d) => d["total"]),
     ])
     .range([height, 0]);
 
@@ -46,9 +46,9 @@ function drawBarChart(
     .enter()
     .append("rect")
     .attr("x", (d) => x(d["day"]))
-    .attr("y", (d) => height - y(d["totalPlayedTimeMin"]))
+    .attr("y", (d) => height - y(d["total"]))
     .attr("width", (d) => x.bandwidth())
-    .attr("height", (d) => y(d["totalPlayedTimeMin"]))
+    .attr("height", (d) => y(d["total"]))
     .style("fill", "steelblue");
 
   g.selectAll("text")
@@ -98,7 +98,7 @@ function drawBarChart(
       .scaleLinear()
       .domain([
         0,
-        d3.max(dailyListeningTimeFilt, (d) => d["totalPlayedTimeMin"]),
+        d3.max(dailyListeningTimeFilt, (d) => d["total"]),
       ])
       .range([height, 0]);
 
@@ -109,9 +109,9 @@ function drawBarChart(
       .enter()
       .append("rect")
       .attr("x", (d) => x(d["day"]))
-      .attr("y", (d) => height - y(d["totalPlayedTimeMin"]))
+      .attr("y", (d) => height - y(d["total"]))
       .attr("width", (d) => x.bandwidth())
-      .attr("height", (d) => y(d["totalPlayedTimeMin"]))
+      .attr("height", (d) => y(d["total"]))
       .style("fill", "steelblue");
 
     g.selectAll("text")
