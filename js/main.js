@@ -21,10 +21,61 @@ let width = 600,
     "valence",
     "popularity",
     "tempo",
-  ];
+  ],
+  streamingHistorySelected = null,
+  userSongsSelected = null,
+  songsSelected = null;
 
 songSelector = document.getElementById("selectsongindex");
 monthSelector = document.getElementById("selectmonthindex");
+
+checkboxInput = document.getElementById("checkbox-input");
+filesSelector = document.getElementById("files-selector");
+filesSelector.style.display = "flex"; //"none";
+alertBanner = document.getElementById("alert-banner");
+alertBanner.style.display = "none";
+
+// file selectors
+streamingHistorySelector = document.getElementById("streaming_history");
+userSongsJsonSelector = document.getElementById("user_songs_json");
+songsJsonSelector = document.getElementById("songs_json");
+filesSelectorButton = document.getElementById("files-selector-validate");
+
+filesSelectorButton.addEventListener("click", (event) => {
+  if (
+    streamingHistorySelected === null ||
+    userSongsSelected === null ||
+    songsSelected === null
+  ) {
+    // displayError
+    alertBanner.innerHTML =
+      "Please, select the different files (StreamingHistory, user_songs_json and songs_json)";
+    alertBanner.style.display = "flex";
+    console.log("Not all file selected");
+  } else {
+    alertBanner.style.display = "none";
+    // check that uploaded data are correct
+    // viz modification
+    streamingHistory = streamingHistorySelected;
+    user_songs = Object.values(userSongsSelected)
+      .sort((a, b) => b.countPerTrack - a.countPerTrack)
+      .map((elt) => {
+        elt["msPlayedSumTime"] = formatTime(elt["msPlayedSum"]);
+        return elt;
+      });
+    songs = Object.values(songsSelected);
+
+    // console.log("streamingHistory", streamingHistory);
+    // console.log("user_songs", user_songs);
+    // console.log("songs", songs);
+
+    processData();
+    fillSelectorSong(songSelector, user_songs);
+    fillSelectorMonth(monthSelector, dailyListeningTime);
+    buildViz();
+    console.log("all file selected, modification of the viz");
+  }
+});
 
 Date.prototype.getWeek = function () {
   var onejan = new Date(this.getFullYear(), 0, 1);
@@ -74,9 +125,10 @@ monthSelector.addEventListener("change", (event) => {
   barChart.filterMonth(event.target.value);
 });
 
-// let chartDiv = document.getElementById("recommendationchart-div");
-// chartDiv.setAttribute("width", width);
-// chartDiv.setAttribute("height", height);
+checkboxInput.addEventListener("change", () => {
+  filesSelector.style.display =
+    filesSelector.style.display === "none" ? "flex" : "none";
+});
 
 function buildRecommendationsPath() {
   let path_recommendations = [];
@@ -176,6 +228,48 @@ function buildApp() {
       buildViz();
     });
 }
+
+const selectInputs = document.querySelectorAll('input[type="file"]');
+selectInputs.forEach((input) => {
+  input.addEventListener(
+    "change",
+    function (e) {
+      Object.keys(input.files).forEach((key) => {
+        const reader = new FileReader();
+        reader.readAsText(input.files[key]);
+        reader.onload = function () {
+          try {
+            // console.log(input.files[key], JSON.parse(reader.result));
+            if (e.target.id === "streaming_history") {
+              if (streamingHistorySelected === null) {
+                streamingHistorySelected = JSON.parse(reader.result);
+              } else {
+                streamingHistorySelected = streamingHistorySelected.concat(
+                  JSON.parse(reader.result)
+                );
+              }
+            } else if (e.target.id === "user_songs_json") {
+              userSongsSelected = JSON.parse(reader.result);
+            } else if (e.target.id === "songs_json") {
+              songsSelected = JSON.parse(reader.result);
+            } else {
+              console.log("No id found for this selector");
+            }
+            // displayError();
+          } catch (err) {
+            // displayError();
+            // alertBanner.innerHTML =
+            // "We had some error reading this file";
+            // alertBanner.style.display = "flex";
+
+            console.error(err);
+          }
+        };
+      });
+    },
+    false
+  );
+});
 
 function readFile(file) {
   return new Promise(function (resolve, reject) {
