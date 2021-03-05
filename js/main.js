@@ -31,7 +31,7 @@ monthSelector = document.getElementById("selectmonthindex");
 
 checkboxInput = document.getElementById("checkbox-input");
 filesSelector = document.getElementById("files-selector");
-filesSelector.style.display = "flex"; //"none";
+filesSelector.style.display = "none"; //"flex";
 alertBanner = document.getElementById("alert-banner");
 alertBanner.style.display = "none";
 
@@ -165,31 +165,37 @@ function formatTime(time) {
   );
 }
 
-function mergeData(selected,notSelected){
-  let result = Array()
+function mergeData(selected, notSelected) {
+  let result = Array();
   let i = 0;
-  if (selected.length > 0){
-    for (var k = 0; k<selected.length; k++){
-      while (notSelected[i]["day"] != selected[k]["day"]){
+  if (selected.length > 0) {
+    for (var k = 0; k < selected.length; k++) {
+      while (notSelected[i]["day"] != selected[k]["day"]) {
         result.push({
           day: notSelected[i]["day"],
-          month: notSelected[i]["day"].substring(0,7),
+          month: notSelected[i]["day"].substring(0, 7),
           total: notSelected[i]["notSelected"],
           notSelected: notSelected[i]["notSelected"],
-          selected: 0
-        })
+          selected: 0,
+        });
         i += 1;
-        if (k>0){
-          result[i-1]["selected"] = notSelected[i-1]["day"] == selected[k-1]["day"] ? selected[k-1]["selected"] : 0;
-          result[i-1]["total"] = notSelected[i-1]["day"] == selected[k-1]["day"] ? selected[k-1]["selected"] + result[i-1]["total"] : 0;
+        if (k > 0) {
+          result[i - 1]["selected"] =
+            notSelected[i - 1]["day"] == selected[k - 1]["day"]
+              ? selected[k - 1]["selected"]
+              : 0;
+          result[i - 1]["total"] =
+            notSelected[i - 1]["day"] == selected[k - 1]["day"]
+              ? selected[k - 1]["selected"] + result[i - 1]["total"]
+              : 0;
         }
       }
     }
-    return result
-  } else{
-    return notSelected.map(function(c){
-      c["total"] = c["notSelected"]
-      return c
+    return result;
+  } else {
+    return notSelected.map(function (c) {
+      c["total"] = c["notSelected"];
+      return c;
     });
   }
 }
@@ -208,34 +214,47 @@ function calculateAverageScorePerFeatures() {
 function calculatedailyListeningTime() {
   let artistName = "";
   let trackName = "";
-  let streamingHistorySelected = streamingHistory.filter(function(d){
-    return d["artistName"] === artistName && d["trackName"] === trackName
+  let streamingHistorySelected = streamingHistory.filter(function (d) {
+    return d["artistName"] === artistName && d["trackName"] === trackName;
   });
-   streamingHistoryNotSelected = streamingHistory.filter(function(d){
-    if(d["artistName"] === artistName){
-      return d["trackName"] != trackName
+  streamingHistoryNotSelected = streamingHistory.filter(function (d) {
+    if (d["artistName"] === artistName) {
+      return d["trackName"] != trackName;
     } else {
-      return d
+      return d;
     }
   });
-  dailyListeningTimeSelected = Array.from(d3.rollup(streamingHistorySelected, v => d3.sum(v, v => v["msPlayed"]), d => d["endTime"].substring(0,10)))
-  .map(d => {
-    d["day"] = d[0]
-    d["month"] = d[0].substring(0,7)
-    d["selected"] = d[1]/1000/60
-    d["notSelected"] = 0
-    return d
+  dailyListeningTimeSelected = Array.from(
+    d3.rollup(
+      streamingHistorySelected,
+      (v) => d3.sum(v, (v) => v["msPlayed"]),
+      (d) => d["endTime"].substring(0, 10)
+    )
+  ).map((d) => {
+    d["day"] = d[0];
+    d["month"] = d[0].substring(0, 7);
+    d["selected"] = d[1] / 1000 / 60;
+    d["notSelected"] = 0;
+    return d;
   });
-  dailyListeningTimeNotSelected = Array.from(d3.rollup(streamingHistoryNotSelected, v => d3.sum(v, v => v["msPlayed"]), d => d["endTime"].substring(0,10)))
-  .map(d => {
-    d["day"] = d[0]
-    d["month"] = d[0].substring(0,7)
-    d["notSelected"] = d[1]/1000/60
-    d["selected"] = 0
-    return d
+  dailyListeningTimeNotSelected = Array.from(
+    d3.rollup(
+      streamingHistoryNotSelected,
+      (v) => d3.sum(v, (v) => v["msPlayed"]),
+      (d) => d["endTime"].substring(0, 10)
+    )
+  ).map((d) => {
+    d["day"] = d[0];
+    d["month"] = d[0].substring(0, 7);
+    d["notSelected"] = d[1] / 1000 / 60;
+    d["selected"] = 0;
+    return d;
   });
-  dailyListeningTime = mergeData(dailyListeningTimeSelected,dailyListeningTimeNotSelected);
-  return dailyListeningTime
+  dailyListeningTime = mergeData(
+    dailyListeningTimeSelected,
+    dailyListeningTimeNotSelected
+  );
+  return dailyListeningTime;
 }
 
 function processData() {

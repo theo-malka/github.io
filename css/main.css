@@ -85,6 +85,11 @@ html, body {
 }
 
 
+.switch-div {
+    margin:2%;
+    padding-left: 20%;
+}
+
 
 /* The switch - the box around the slider */
 .switch {
@@ -92,6 +97,7 @@ position: relative;
 display: inline-block;
 width: 44px;
 height: 24px;
+margin-right:5%;
 }
 
 .alert{

@@ -26,17 +26,25 @@
 	</head>
 	<body>
 		<div>
-			<div id="btn-info" >
-				<!-- <img src="/spotify.svg"  width="24px" height="24px"/> -->
-				<input type="image"  src="./info-icon.svg" width="12px" height="12px" data-toggle="modal" data-target="#modal-instructions"></input>
+			<div class="row">
+				<div class="col">
+					<div class="row switch-div">
+						<label class="switch">
+							<input id="checkbox-input" type="checkbox">
+							<span class="slider round"></span>
+						</label>
+						<p>Use your own data ?</p>
+					</div>
+				</div>
+				<div class="col">
+					<span class="title">Spotify data visualization project</span>
+				</div>
+				<div id="btn-info" class="col">
+					<input type="image"  src="./info-icon.svg" width="12px" height="12px" data-toggle="modal" data-target="#modal-instructions"></input>
+				</div>
+
 			</div>
-			<span class="title">Spotify data visualization project</span>
 			
-			<span>Use your own data ?</span>
-			<label class="switch">
-				<input id="checkbox-input" type="checkbox">
-				<span class="slider round"></span>
-			</label>
 
 			<div class="input-group mb-3" id="files-selector">
 				<div class="custom-file">
