@@ -6,6 +6,9 @@ let width = 600,
   user_songs,
   songs,
   streamingHistory,
+  user_songsInitial,
+  songsInitial,
+  streamingHistoryInitial,
   recommendationChart,
   radioChart,
   barChart,
@@ -30,8 +33,9 @@ songSelector = document.getElementById("selectsongindex");
 monthSelector = document.getElementById("selectmonthindex");
 
 checkboxInput = document.getElementById("checkbox-input");
+
 filesSelector = document.getElementById("files-selector");
-filesSelector.style.display = "none"; //"flex";
+// filesSelector.style.display = "none"; //"flex";
 alertBanner = document.getElementById("alert-banner");
 alertBanner.style.display = "none";
 
@@ -40,6 +44,7 @@ streamingHistorySelector = document.getElementById("streaming_history");
 userSongsJsonSelector = document.getElementById("user_songs_json");
 songsJsonSelector = document.getElementById("songs_json");
 filesSelectorButton = document.getElementById("files-selector-validate");
+filesSelectorButton.disabled = true;
 
 filesSelectorButton.addEventListener("click", (event) => {
   if (
@@ -53,27 +58,38 @@ filesSelectorButton.addEventListener("click", (event) => {
     alertBanner.style.display = "flex";
     console.log("Not all file selected");
   } else {
-    alertBanner.style.display = "none";
-    // check that uploaded data are correct
-    // viz modification
-    streamingHistory = streamingHistorySelected;
-    user_songs = Object.values(userSongsSelected)
-      .sort((a, b) => b.countPerTrack - a.countPerTrack)
-      .map((elt) => {
-        elt["msPlayedSumTime"] = formatTime(elt["msPlayedSum"]);
-        return elt;
-      });
-    songs = Object.values(songsSelected);
+    try {
+      filesSelectorButton.disabled = true;
+      alertBanner.style.display = "none";
+      // check that uploaded data are correct
+      // viz modification
+      streamingHistory = streamingHistorySelected;
+      user_songs = Object.values(userSongsSelected)
+        .sort((a, b) => b.countPerTrack - a.countPerTrack)
+        .map((elt) => {
+          elt["msPlayedSumTime"] = formatTime(elt["msPlayedSum"]);
+          return elt;
+        });
+      songs = Object.values(songsSelected);
 
-    // console.log("streamingHistory", streamingHistory);
-    // console.log("user_songs", user_songs);
-    // console.log("songs", songs);
+      localStorage.setItem(
+        "streamingHistory",
+        JSON.stringify(streamingHistory)
+      );
+      localStorage.setItem("user_songs", JSON.stringify(user_songs));
+      localStorage.setItem("songs", JSON.stringify(songs));
 
-    processData();
-    fillSelectorSong(songSelector, user_songs);
-    fillSelectorMonth(monthSelector, dailyListeningTime);
-    buildViz();
-    console.log("all file selected, modification of the viz");
+      // console.log("streamingHistory", streamingHistory);
+      // console.log("user_songs", user_songs);
+      // console.log("songs", songs);
+
+      processApp();
+      console.log("all file selected, modification of the viz");
+    } catch (err) {
+      alertBanner.innerHTML =
+        "We had some error processing on of the files ! Please try again";
+      alertBanner.style.display = "flex";
+    }
   }
 });
 
@@ -115,7 +131,6 @@ function fillSelectorMonth(monthSelector, values) {
 
 songSelector.addEventListener("change", (event) => {
   songIndex = parseInt(event.target.value);
-  console.log(user_songs[songIndex]);
   recommendationChart.changeSong(user_songs[songIndex]);
   radioChart.changeSong(user_songs[songIndex]);
 });
@@ -126,8 +141,27 @@ monthSelector.addEventListener("change", (event) => {
 });
 
 checkboxInput.addEventListener("change", () => {
-  filesSelector.style.display =
-    filesSelector.style.display === "none" ? "flex" : "none";
+  // filesSelector.style.display =
+  //   filesSelector.style.display === "none" ? "flex" : "none";
+  // si changement checkbox -> on utilise les données si elles sont stockées
+  if (filesSelector.style.display === "none") {
+    filesSelector.style.display = "flex";
+    if (
+      localStorage.getItem("streamingHistory") === null ||
+      localStorage.getItem("user_songs") === null ||
+      localStorage.getItem("songs") === null
+    ) {
+      // on affiche les données de base -> on ne fait rien
+      console.log("no data stored");
+    } else {
+      // on affiche les données users grace au localstorage
+      buildAppWithUserData();
+    }
+  } else {
+    filesSelector.style.display = "none";
+    // on affiche les données de base
+    buildAppWithInitialData();
+  }
 });
 
 function buildRecommendationsPath() {
@@ -263,7 +297,7 @@ function processData() {
   dailyListeningTime = calculatedailyListeningTime();
 }
 
-function buildApp() {
+function buildAppWithInitialData() {
   let files = [
     "/data/songs_json.json",
     "/data/user_songs_json.json",
@@ -284,11 +318,38 @@ function buildApp() {
         (songs = Object.values(results[0]));
     })
     .then(() => {
-      processData();
-      fillSelectorSong(songSelector, user_songs);
-      fillSelectorMonth(monthSelector, dailyListeningTime);
-      buildViz();
+      processApp();
     });
+}
+function buildAppWithUserData() {
+  streamingHistory = JSON.parse(localStorage.getItem("streamingHistory"));
+  user_songs = JSON.parse(localStorage.getItem("user_songs"));
+  songs = JSON.parse(localStorage.getItem("songs"));
+  processApp();
+}
+function buildApp() {
+  if (
+    localStorage.getItem("streamingHistory") === null ||
+    localStorage.getItem("user_songs") === null ||
+    localStorage.getItem("songs") === null
+  ) {
+    filesSelector.style.display = "none";
+    checkboxInput.checked = false;
+    buildAppWithInitialData();
+    console.log("Build initial data app");
+  } else {
+    filesSelector.style.display = "flex";
+    checkboxInput.checked = true;
+    buildAppWithUserData();
+    console.log("Build personal data app");
+  }
+}
+
+function processApp() {
+  processData();
+  fillSelectorSong(songSelector, user_songs);
+  fillSelectorMonth(monthSelector, dailyListeningTime);
+  buildViz();
 }
 
 const selectInputs = document.querySelectorAll('input[type="file"]');
@@ -316,6 +377,15 @@ selectInputs.forEach((input) => {
               songsSelected = JSON.parse(reader.result);
             } else {
               console.log("No id found for this selector");
+            }
+            if (
+              streamingHistorySelected !== null &&
+              userSongsSelected !== null &&
+              songsSelected !== null
+            ) {
+              filesSelectorButton.disabled = false;
+            } else {
+              filesSelectorButton.disabled = true;
             }
             // displayError();
           } catch (err) {

@@ -40,7 +40,7 @@
 					<span class="title">Spotify data visualization project</span>
 				</div>
 				<div id="btn-info" class="col">
-					<input type="image"  src="./info-icon.svg" width="12px" height="12px" data-toggle="modal" data-target="#modal-instructions"></input>
+					<input type="image"  src="./info-icon.svg" width="24px" height="24px" data-toggle="modal" data-target="#modal-instructions"></input>
 				</div>
 
 			</div>
@@ -110,17 +110,38 @@
 							<a href="https://github.com/maximepeter">Maxime Peter</a> and <a href="https://github.com/Julien-Verdun">Julien Verdun</a>
 							as part of a data visualization class at Ecole Centrale de Lyon.
 						</p>
-						<p>How can I visualize my own data ?</p>
+
+						<p><b>What is this dashboard all about ?</b></p>
+
+						<p>
+							This dashboard includes 3 charts. 
+						</p>
+						<p>
+							The chart to left hand represents the listened song in white and the recommended songs (Spotify recommendations) in colors. The songs are projected in a 2D space (result of a PCA).
+							The recommended songs are divided into 4 clusters defined by their color. 
+							When one hovers over or clicks on a user song, some paths come out, they are the links beetwen a song and the Spotify recommendations. 
+						</p>
+						<p>
+							To the top right hand corner, the radar chart represents for a chosen song in the songs' selector, the area created by the line which joins the different features of the song. An area is always there and represents the mean area (mean over every songs lsitened).   
+						</p>
+						<p>
+							To the bottom right hand corner, the bar chart represents the listening history per month (amount of time of listening over the day of a given month).
+						</p>
+
+						<p><b>How can I visualize my own data ?</b></p>
 
 						<p>First you need to ask Spotify for your own personal data and then create Spotify Web Developper account, in order to use the Spotify API.
 							The next step is to use the python notebook to extract your songs features. 
-							
+						</p>
+						<p>
 							Then you will be able to upload those data with the button at the top left hand corner of the window and the visualizations
 							will be updated with your personnal data. 
-							
+						</p>
+						<p>
 							The documentation of the project is available <a href="https://github.com/Julien-Verdun/SpotifyDataVisualizationProject">here</a>.
 							Follow all the instructions in the README file and you will get your data to use for this dashboard. 
-							
+						</p>
+						<p>
 							Then, switch the checkbox in order to upload your own data. You will be asked to upload the 3 files :
 							<ul>
 								<li>
