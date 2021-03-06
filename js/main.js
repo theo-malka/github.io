@@ -6,9 +6,6 @@ let width = 600,
   user_songs,
   songs,
   streamingHistory,
-  user_songsInitial,
-  songsInitial,
-  streamingHistoryInitial,
   recommendationChart,
   radioChart,
   barChart,
@@ -43,8 +40,16 @@ alertBanner.style.display = "none";
 streamingHistorySelector = document.getElementById("streaming_history");
 userSongsJsonSelector = document.getElementById("user_songs_json");
 songsJsonSelector = document.getElementById("songs_json");
+// file selectors labels
+streamingHistoryLabel = document.getElementById("streaming_history_label");
+userSongsJsonLabel = document.getElementById("user_songs_json_label");
+songsJsonLabel = document.getElementById("songs_json_label");
+
+// button validate
 filesSelectorButton = document.getElementById("files-selector-validate");
 filesSelectorButton.disabled = true;
+
+streamingHistorySelector.style.backgroundColor = "blue";
 
 filesSelectorButton.addEventListener("click", (event) => {
   if (
@@ -145,6 +150,9 @@ checkboxInput.addEventListener("change", () => {
   //   filesSelector.style.display === "none" ? "flex" : "none";
   // si changement checkbox -> on utilise les données si elles sont stockées
   if (filesSelector.style.display === "none") {
+    streamingHistoryLabel.innerHTML = "... (streamingHistoryX.json)";
+    userSongsJsonLabel.innerHTML = "... (user_songs_json.json)";
+    songsJsonLabel.innerHTML = "... (songs_json.json)";
     filesSelector.style.display = "flex";
     if (
       localStorage.getItem("streamingHistory") === null ||
@@ -371,10 +379,15 @@ selectInputs.forEach((input) => {
                   JSON.parse(reader.result)
                 );
               }
+              streamingHistoryLabel.innerHTML = Object.values(input.files)
+                .map((elt) => elt.name)
+                .join(" - ");
             } else if (e.target.id === "user_songs_json") {
               userSongsSelected = JSON.parse(reader.result);
+              userSongsJsonLabel.innerHTML = input.files[key].name;
             } else if (e.target.id === "songs_json") {
               songsSelected = JSON.parse(reader.result);
+              songsJsonLabel.innerHTML = input.files[key].name;
             } else {
               console.log("No id found for this selector");
             }
