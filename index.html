@@ -3,7 +3,7 @@
 	<head>
 		<title>Spotify datavisualization project</title>
 		<link rel="stylesheet" type="text/css" href="/css/main.css" />
-
+		<link rel="shortcut icon" type="image/png" href="/spotify.svg"/>
 		
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
             integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -26,10 +26,45 @@
 	</head>
 	<body>
 		<div>
-			<div id="btn-info" >
-				<input type="image"  src="./info-icon.svg" width="12px" height="12px" data-toggle="modal" data-target="#modal-instructions"></input>
+			<div class="row">
+				<div class="col">
+					<div class="row switch-div">
+						<label class="switch">
+							<input id="checkbox-input" type="checkbox">
+							<span class="slider round"></span>
+						</label>
+						<p>Use your own data ?</p>
+					</div>
+				</div>
+				<div class="col">
+					<span class="title">Spotify data visualization project</span>
+				</div>
+				<div id="btn-info" class="col">
+					<input type="image"  src="./info-icon.svg" width="24px" height="24px" data-toggle="modal" data-target="#modal-instructions"></input>
+				</div>
+
 			</div>
-			<span class="title">Spotify data visualization project</span>
+			
+
+			<div class="input-group mb-3" id="files-selector">
+				<div class="custom-file">
+					<input type="file" multiple="True" class="custom-file-input" id="streaming_history">
+					<label class="custom-file-label" id="streaming_history_label" for="streaming_history">... (StreamingHistoryX.json)</label>
+				</div>
+				<div class="custom-file">
+					<input type="file" class="custom-file-input" id="user_songs_json">
+					<label class="custom-file-label" id="user_songs_json_label" for="user_songs_json">... (user_songs_json.json)</label>
+				</div>
+				<div class="custom-file">
+					<input type="file" class="custom-file-input" id="songs_json">
+					<label class="custom-file-label" id="songs_json_label" for="songs_json">... (songs_json.json)</label>
+				</div>
+				<button class="btn btn-primary" id="files-selector-validate">Validate</button>
+			</div>
+
+			<div class="alert alert-danger" id="alert-banner" role="alert">
+				This is a danger alert—check it out!
+			  </div>
 			
 			<div class="wrapper">
 				<div class="recommendation-div">
@@ -75,16 +110,51 @@
 							<a href="https://github.com/maximepeter">Maxime Peter</a> and <a href="https://github.com/Julien-Verdun">Julien Verdun</a>
 							as part of a data visualization class at Ecole Centrale de Lyon.
 						</p>
-						<p>How can I visualize my own data ?</p>
+
+						<p><b>What is this dashboard all about ?</b></p>
+
+						<p>
+							This dashboard includes 3 charts. 
+						</p>
+						<p>
+							The chart to left hand represents the listened song in white and the recommended songs (Spotify recommendations) in colors. The songs are projected in a 2D space (result of a PCA).
+							The recommended songs are divided into 4 clusters defined by their color. 
+							When one hovers over or clicks on a user song, some paths come out, they are the links beetwen a song and the Spotify recommendations. 
+						</p>
+						<p>
+							To the top right hand corner, the radar chart represents for a chosen song in the songs' selector, the area created by the line which joins the different features of the song. An area is always there and represents the mean area (mean over every songs lsitened).   
+						</p>
+						<p>
+							To the bottom right hand corner, the bar chart represents the listening history per month (amount of time of listening over the day of a given month).
+						</p>
+
+						<p><b>How can I visualize my own data ?</b></p>
 
 						<p>First you need to ask Spotify for your own personal data and then create Spotify Web Developper account, in order to use the Spotify API.
 							The next step is to use the python notebook to extract your songs features. 
-							
+						</p>
+						<p>
 							Then you will be able to upload those data with the button at the top left hand corner of the window and the visualizations
 							will be updated with your personnal data. 
-							
+						</p>
+						<p>
 							The documentation of the project is available <a href="https://github.com/Julien-Verdun/SpotifyDataVisualizationProject">here</a>.
 							Follow all the instructions in the README file and you will get your data to use for this dashboard. 
+						</p>
+						<p>
+							Then, switch the checkbox in order to upload your own data. You will be asked to upload the 3 files :
+							<ul>
+								<li>
+									StreamingHistoryX.json (as much files as you got from Spotify)
+								</li>
+								<li>
+									songs_json.json
+								</li>
+								<li>
+									user_songs_json.json
+								</li>
+							</ul> 
+
 						</p>
 					</div>
 					<div class="modal-footer">
