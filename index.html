@@ -114,18 +114,24 @@
 						<p><b>What is this dashboard all about ?</b></p>
 
 						<p>
-							This dashboard includes 3 charts. 
+							This dashboard includes 3 charts. It aims at analyzing one personal Spotify listening data. 
 						</p>
+						<p style="text-decoration: underline;">The recommendation chart :</p>
 						<p>
 							The chart to left hand represents the listened song in white and the recommended songs (Spotify recommendations) in colors. The songs are projected in a 2D space (result of a PCA).
 							The recommended songs are divided into 4 clusters defined by their color. 
 							When one hovers over or clicks on a user song, some paths come out, they are the links beetwen a song and the Spotify recommendations. 
 						</p>
+						<p style="text-decoration: underline;">The radar chart :</p>
 						<p>
-							To the top right hand corner, the radar chart represents for a chosen song in the songs' selector, the area created by the line which joins the different features of the song. An area is always there and represents the mean area (mean over every songs lsitened).   
+							To the top right hand corner, the radar chart represents for a chosen song in the songs' selector, in green, the area created by the line which joins the different features of the song. 
+							The red area represents the mean area (mean over every songs lsitened).
+							The green area represents the song's features when a song from the recommendation chart is hovered over.   
 						</p>
+						<p style="text-decoration: underline;">The bar chart :</p>
 						<p>
-							To the bottom right hand corner, the bar chart represents the listening history per month (amount of time of listening over the day of a given month).
+							To the bottom right hand corner, the bar chart represents the listening history per month in blue (amount of time of listening over the day of a given month).
+							When a song is selected with the selector at the top of the recommendation chart, the listening time regarding this song is displayed and stacked in pink in the bar chart. 
 						</p>
 
 						<p><b>How can I visualize my own data ?</b></p>
@@ -142,7 +148,7 @@
 							Follow all the instructions in the README file and you will get your data to use for this dashboard. 
 						</p>
 						<p>
-							Then, switch the checkbox in order to upload your own data. You will be asked to upload the 3 files :
+							Then, switch the checkbox in order to upload your own data. You will be asked to upload the 3 type of files :
 							<ul>
 								<li>
 									StreamingHistoryX.json (as much files as you got from Spotify)

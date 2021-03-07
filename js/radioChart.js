@@ -117,8 +117,8 @@ function drawRadioChart(
       .duration(200)
       .attr("d", line)
       .attr("stroke-width", 3)
-      .attr("stroke", "#1956ff")
-      .attr("fill", "#36b3ff")
+      .attr("stroke", "#FF0000")
+      .attr("fill", "#990000")
       .attr("stroke-opacity", 1)
       .attr("opacity", 0.4)
       .attr("id", "onhoverpath");
@@ -126,7 +126,6 @@ function drawRadioChart(
 
   function outedSong() {
     svgRadioChart.select("#onhoverpath").remove();
-    // console.log(svgRadioChart.selectAll("path"));
   }
 
   function changeSong(song) {
@@ -147,8 +146,8 @@ function drawRadioChart(
       .duration(200)
       .attr("d", line)
       .attr("stroke-width", 3)
-      .attr("stroke", "#195607")
-      .attr("fill", "#36b310")
+      .attr("stroke", "#00FF00")
+      .attr("fill", "#009900")
       .attr("stroke-opacity", 1)
       .attr("opacity", 0.4);
 
@@ -168,7 +167,7 @@ function drawRadioChart(
       .attr("d", line)
       .attr("stroke-width", 3)
       .attr("stroke", "#0000FF")
-      .attr("fill", "#3333AA")
+      .attr("fill", "#000099")
       .attr("stroke-opacity", 1)
       .attr("opacity", 0.4);
   }
