@@ -112,7 +112,6 @@ function drawBarChart(
     .attr("width", xScale.bandwidth())
     .on("mouseover", function (d) {
       let dataTooltip = d3.select(this)._groups[0][0].__data__.data;
-      console.log(dataTooltip);
       tooltip.html(
         "<span>Date : " +
           dataTooltip.day +
@@ -206,7 +205,6 @@ function drawBarChart(
       .attr("width", xScale.bandwidth())
       .on("mouseover", function (d) {
         let dataTooltip = d3.select(this)._groups[0][0].__data__.data;
-        console.log(dataTooltip);
         tooltip.html(
           "<span>Date : " +
             dataTooltip.day +
