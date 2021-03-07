@@ -23,129 +23,142 @@ function drawBarChart(
       height + margin.top + margin.bottom,
     ]);
 
-  const g = svg.append("g").attr("transform", "translate(80 0)");
+  xScale = d3.scaleBand(
+    dailyListeningTimeFiltered.map(d => d.day),
+    [ margin.left, width - margin.right ]
+  ).padding(0.2)
 
-  let x = d3
-    .scaleBand()
-    .domain(Array.from(dailyListeningTimeFiltered).map((d) => d["day"]))
-    .range([0, width])
-    .padding(0.2);
+  yScale = d3.scaleLinear(
+    [ 0, d3.max(dailyListeningTimeFiltered, d => d.total) ],
+    [ height - margin.bottom, margin.top ]
+  )
 
-  let y = d3
-    .scaleLinear()
-    .domain([
-      0,
-      d3.max(dailyListeningTimeFiltered, (d) => d["total"]),
-    ])
-    .range([height, 0]);
+  xAxis = d3.axisBottom(xScale)
+  .tickSizeOuter(0)
 
-  let yAxis = (g) => g.call(d3.axisLeft(y));
+  yAxis = d3.axisLeft(yScale)
 
-  g.selectAll("rect")
-    .data(dailyListeningTimeFiltered)
-    .enter()
-    .append("rect")
-    .attr("x", (d) => x(d["day"]))
-    .attr("y", (d) => height - y(d["total"]))
-    .attr("width", (d) => x.bandwidth())
-    .attr("height", (d) => y(d["total"]))
-    .style("fill", "steelblue");
+  stack = d3.stack()
+  .keys( ["notSelected","selected"] )
 
-  g.selectAll("text")
-    .data(dailyListeningTimeFiltered)
-    .enter()
-    .append("text")
-    .attr("x", (d) => x(d["day"]))
-    .attr("y", (d) => width)
-    .attr(
-      "transform",
-      (d) =>
-        "translate(" +
-        x.bandwidth() / 4 +
-        " " +
-        10 +
-        ") rotate(45 " +
-        x(d["day"]) +
-        ", " +
-        height +
-        ")"
-    )
-    .text((d) => d["day"]);
 
-  g.append("text")
-    .attr("x", width / 3)
-    .attr("y", height + 90)
-    .style("font-size", "20px")
-    .style("font-family", "system-ui")
-    .text(title);
+  colors = d3.scaleOrdinal(
+    ["notSelected","selected"],
+    d3.schemeGnBu[6].slice(3)
+  )
 
-  g.append("g").call(yAxis);
+  const chartData = stack( dailyListeningTimeFiltered ) 
+  
+  const groups = svg.append('g')
+    // Each layer of the stack goes in a group
+    // the group contains that layer for all countries
+    .selectAll('g')
+    .data( chartData )
+    .join('g')
+      // rects in the same layer will all have the same color, so we can put it on the group
+      // we can use the key on the layer's array to set the color
+      .style('fill', (d,i) => colors(d.key))
+  
+  groups.selectAll('rect')
+    // Now we place the rects, which are the children of the layer array
+    .data(d => d)
+    .join('rect')
+      .attr('x', d => xScale(d.data.day))
+      .attr('y', d => yScale(d[1]))
+      .attr('height', d => yScale(d[0]) - yScale(d[1]))
+      .attr('width', xScale.bandwidth())
 
-  function filterMonth(selectedMonth) {
-    let dailyListeningTimeFilt = dailyListeningTime.filter(
-      (d) => d["month"] === selectedMonth
-    );
-
-    g.selectAll("*").remove();
-
-    x = d3
-      .scaleBand()
-      .domain(Array.from(dailyListeningTimeFilt).map((d) => d["day"]))
-      .range([0, width])
-      .padding(0.2);
-
-    y = d3
-      .scaleLinear()
-      .domain([
-        0,
-        d3.max(dailyListeningTimeFilt, (d) => d["total"]),
-      ])
-      .range([height, 0]);
-
-    yAxis = (g) => g.call(d3.axisLeft(y));
-
-    g.selectAll("rect")
-      .data(dailyListeningTimeFilt)
-      .enter()
-      .append("rect")
-      .attr("x", (d) => x(d["day"]))
-      .attr("y", (d) => height - y(d["total"]))
-      .attr("width", (d) => x.bandwidth())
-      .attr("height", (d) => y(d["total"]))
-      .style("fill", "steelblue");
-
-    g.selectAll("text")
-      .data(dailyListeningTimeFilt)
-      .enter()
-      .append("text")
-      .attr("x", (d) => x(d["day"]))
-      .attr("y", (d) => width)
-      .attr(
-        "transform",
-        (d) =>
-          "translate(" +
-          x.bandwidth() / 4 +
-          " " +
-          10 +
-          ") rotate(45 " +
-          x(d["day"]) +
-          ", " +
-          height +
-          ")"
-      )
-      .text((d) => d["day"]);
-    
-    g.append("text")
-        .attr("x", width / 3)
-        .attr("y", height + 90)
+  svg.append('g')
+      .attr('transform', `translate(0,${ height - margin.bottom })`)
+      .call(xAxis)
+     .selectAll("text")
+      .attr("transform", "translate(27, 20) rotate (45)")
+  
+  
+  svg.append('g')
+    .attr('transform', `translate(${ margin.left },0)`)
+    .call(yAxis)
+    .select('.domain').remove()
+  
+  svg.append("text")
+        .attr("x", width / 4 + 50)
+        .attr("y", height + 10)
         .style("font-size", "20px")
         .style("font-family", "system-ui")
         .text(title);
 
-    g.append("g").call(yAxis);
+  function filterMonth(selectedMonth, dailyListeningTimeSong) {
+    let dailyListeningTimeFilt = dailyListeningTimeSong.filter(
+      (d) => d["month"] === selectedMonth
+    );
+    svg.selectAll("*").remove();
 
-    return;
-  }
+    xScale = d3.scaleBand(
+        dailyListeningTimeFilt.map(d => d.day),
+        [ margin.left, width - margin.right ]
+    ).padding(0.2)
+
+    yScale = d3.scaleLinear(
+        [ 0, d3.max(dailyListeningTimeFilt, d => d.total) ],
+        [ height - margin.bottom, margin.top ]
+    )
+
+    xAxis = d3.axisBottom(xScale)
+    .tickSizeOuter(0)
+
+    yAxis = d3.axisLeft(yScale)
+
+    stack = d3.stack()
+    .keys( ["notSelected","selected"] )
+
+
+    colors = d3.scaleOrdinal(
+        ["notSelected","selected"],
+        d3.schemeGnBu[6].slice(3)
+    )
+
+    const chartData = stack( dailyListeningTimeFilt ) 
+    
+    const groups = svg.append('g')
+        // Each layer of the stack goes in a group
+        // the group contains that layer for all countries
+        .selectAll('g')
+        .data( chartData )
+        .join('g')
+        // rects in the same layer will all have the same color, so we can put it on the group
+        // we can use the key on the layer's array to set the color
+        .style('fill', (d,i) => colors(d.key))
+    
+    groups.selectAll('rect')
+        // Now we place the rects, which are the children of the layer array
+        .data(d => d)
+        .join('rect')
+        .attr('x', d => xScale(d.data.day))
+        .attr('y', d => yScale(d[1]))
+        .attr('height', d => yScale(d[0]) - yScale(d[1]))
+        .attr('width', xScale.bandwidth())
+
+    svg.append('g')
+        .attr('transform', `translate(0,${ height - margin.bottom })`)
+        .call(xAxis)
+        .selectAll("text")
+        .attr("transform", "translate(27, 20) rotate (45)")
+    
+    
+    svg.append('g')
+        .attr('transform', `translate(${ margin.left },0)`)
+        .call(yAxis)
+        .select('.domain').remove()
+    
+    svg.append("text")
+            .attr("x", width / 4 + 50)
+            .attr("y", height + 10)
+            .style("font-size", "20px")
+            .style("font-family", "system-ui")
+            .text(title);
+
+        return;
+    }
 
   return Object.assign(svg.node(), {
     filterMonth: filterMonth,
