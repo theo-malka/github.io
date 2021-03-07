@@ -379,9 +379,11 @@ selectInputs.forEach((input) => {
                   JSON.parse(reader.result)
                 );
               }
-              streamingHistoryLabel.innerHTML = Object.values(input.files)
-                .map((elt) => elt.name)
-                .join(" - ");
+              streamingHistoryLabel.innerHTML =
+                Object.values(input.files)
+                  .map((elt) => elt.name)
+                  .join(" - ")
+                  .slice(0, 40) + "..";
             } else if (e.target.id === "user_songs_json") {
               userSongsSelected = JSON.parse(reader.result);
               userSongsJsonLabel.innerHTML = input.files[key].name;
