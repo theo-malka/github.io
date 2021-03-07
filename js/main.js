@@ -138,11 +138,18 @@ songSelector.addEventListener("change", (event) => {
   songIndex = parseInt(event.target.value);
   recommendationChart.changeSong(user_songs[songIndex]);
   radioChart.changeSong(user_songs[songIndex]);
+  selectedArtist = user_songs[songIndex]["artist"][0];
+  selectedTrack = user_songs[songIndex]["name"];
+  barChart.filterMonth(monthSelector.options[parseInt(monthSelector.selectedIndex)].value, calculatedailyListeningTimeArtist(selectedArtist, selectedTrack));
 });
 
 monthSelector.addEventListener("change", (event) => {
+  song = user_songs[songSelector.options[parseInt(songSelector.selectedIndex)].value];
+  selectedArtist = song["artist"][0];
+  selectedTrack = song["name"];
+  dailyListeningTimeSong = calculatedailyListeningTimeArtist(selectedArtist, selectedTrack);
   monthIndex = parseInt(event.target.value);
-  barChart.filterMonth(event.target.value);
+  barChart.filterMonth(event.target.value, dailyListeningTimeSong);
 });
 
 checkboxInput.addEventListener("change", () => {
@@ -216,7 +223,6 @@ function mergeData(selected, notSelected) {
         result.push({
           day: notSelected[i]["day"],
           month: notSelected[i]["day"].substring(0, 7),
-          total: notSelected[i]["notSelected"],
           notSelected: notSelected[i]["notSelected"],
           selected: 0,
         });
@@ -226,14 +232,13 @@ function mergeData(selected, notSelected) {
             notSelected[i - 1]["day"] == selected[k - 1]["day"]
               ? selected[k - 1]["selected"]
               : 0;
-          result[i - 1]["total"] =
-            notSelected[i - 1]["day"] == selected[k - 1]["day"]
-              ? selected[k - 1]["selected"] + result[i - 1]["total"]
-              : 0;
         }
       }
     }
-    return result;
+    return result.map(function (c) {
+      c["total"] = c["notSelected"];
+      return c;
+    });
   } else {
     return notSelected.map(function (c) {
       c["total"] = c["notSelected"];
@@ -253,19 +258,65 @@ function calculateAverageScorePerFeatures() {
   return averageScore;
 }
 
-function calculatedailyListeningTime() {
-  let artistName = "";
-  let trackName = "";
-  let streamingHistorySelected = streamingHistory.filter(function (d) {
+function calculatedailyListeningTimeArtist(selectedArtist, selectedTrack) {
+  let artistName = selectedArtist;
+  let trackName = selectedTrack;
+  let streamingHistorySelected = [].concat(streamingHistory.filter(function (d) {
     return d["artistName"] === artistName && d["trackName"] === trackName;
-  });
-  streamingHistoryNotSelected = streamingHistory.filter(function (d) {
+  }));
+  streamingHistoryNotSelected = [].concat(streamingHistory.filter(function (d) {
     if (d["artistName"] === artistName) {
       return d["trackName"] != trackName;
     } else {
       return d;
     }
+  }));
+  dailyListeningTimeSelected = Array.from(
+    d3.rollup(
+      streamingHistorySelected,
+      (v) => d3.sum(v, (v) => v["msPlayed"]),
+      (d) => d["endTime"].substring(0, 10)
+    )
+  ).map((d) => {
+    d["day"] = d[0];
+    d["month"] = d[0].substring(0, 7);
+    d["selected"] = d[1] / 1000 / 60;
+    d["notSelected"] = 0;
+    return d;
   });
+  dailyListeningTimeNotSelected = Array.from(
+    d3.rollup(
+      streamingHistoryNotSelected,
+      (v) => d3.sum(v, (v) => v["msPlayed"]),
+      (d) => d["endTime"].substring(0, 10)
+    )
+  ).map((d) => {
+    d["day"] = d[0];
+    d["month"] = d[0].substring(0, 7);
+    d["notSelected"] = d[1] / 1000 / 60;
+    d["selected"] = 0;
+    return d;
+  });
+  dailyListeningTime = mergeData(
+    dailyListeningTimeSelected,
+    dailyListeningTimeNotSelected
+  );
+  return dailyListeningTime;
+}
+
+function calculatedailyListeningTime() {
+  let artistName = "";
+  let trackName = "";
+  let streamingHistorySelected = [].concat(streamingHistory.filter(function (d) {
+    return d["artistName"] === artistName && d["trackName"] === trackName;
+  }));
+  streamingHistoryNotSelected = [].concat(streamingHistory.filter(function (d) {
+    if (d["artistName"] === artistName) {
+      return d["trackName"] != trackName;
+    } else {
+      return d;
+    }
+  }));
   dailyListeningTimeSelected = Array.from(
     d3.rollup(
       streamingHistorySelected,
@@ -462,12 +513,12 @@ function buildViz() {
   );
   barChart = drawBarChart(
     ".bar-chart",
-    { top: 75, right: 75, bottom: 75, left: 75 },
+    { top: 20, right: 20, bottom: 75, left: 30 },
     width,
     height,
     "Monthly Listening Time (Min)",
     dailyListeningTime,
-    monthSelector.options[monthSelector.selectedIndex].value
+    monthSelector.options[parseInt(monthSelector.selectedIndex)].value
   );
 }
 
