@@ -70,6 +70,7 @@ songSelector.addEventListener("change", (event) => {
 });
 
 monthSelector.addEventListener("change", (event) => {
+  console.log(user_songs[songSelector.options[songSelector.selectedIndex].value])
   monthIndex = parseInt(event.target.value);
   barChart.filterMonth(event.target.value);
 });
