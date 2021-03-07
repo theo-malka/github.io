@@ -44,7 +44,7 @@ function drawBarChart(
 
   colors = d3.scaleOrdinal(
     ["notSelected","selected"],
-    d3.schemeGnBu[6].slice(3)
+    ["steelblue", "#FF1493"]
   )
 
   const chartData = stack( dailyListeningTimeFiltered ) 
@@ -114,7 +114,7 @@ function drawBarChart(
 
     colors = d3.scaleOrdinal(
         ["notSelected","selected"],
-        d3.schemeGnBu[6].slice(3)
+        ["steelblue", "#FF1493"]
     )
 
     const chartData = stack( dailyListeningTimeFilt ) 
